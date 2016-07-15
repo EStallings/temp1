@@ -1,0 +1,69 @@
+<html><head><meta charset="UTF-8">
+<script type='text/javascript' src='main.js'></script>
+<script type='text/javascript' src='auth.js'></script>
+<script type='text/javascript' src='bootup.js'></script>
+<script type='text/javascript' src='loading.js'></script>
+<style>*{position:absolute;margin:0px;}</style></head><body><script>
+C = (D=document).body.appendChild(W=D.createElement("canvas")).getContext("2d");
+(onresize=function(e){W.width=ww=innerWidth;W.height=wh=innerHeight;})();
+
+C_SEED = 0.084287787;
+function setSeed(n) {
+	C_SEED = n;
+}
+
+function crand() {
+	var a = 1103515245;
+	var c = 12345;
+	var m = 0x80000000; // 2^31
+	//var m = 0x7fffffff; // 2^31 - 1
+
+	//(multiplier * current * modul + addend) % modul) / modul
+	C_SEED = ((a * C_SEED * m + c) % m) / m; //next value
+	return C_SEED;
+}
+
+function rint(n){
+	return Math.floor(crand() * n);
+}
+
+Math.random = crand; //DAAAANGER ZOOONE
+
+window.onkeydown = function(e) {
+	console.log(e.keyCode);
+	UI_STATE.onkeydown(e.keyCode);
+}
+
+var UI_STATE = UI_AUTH;
+
+var load_time = 0;
+
+var TIME_ZERO = Date.now();
+var LAST_TIME = TIME_ZERO;
+var time_dt = 0;
+
+function timeNow() {
+	return (Date.now() - TIME_ZERO) / 1000;
+}
+//BOOTUP
+//AUTH
+//MAIN
+
+function transitionTo(UI_MODE)
+{
+	UI_STATE = UI_MODE; //TODO have loading intermediary state
+}
+
+tick = function(){
+	var newtime = timeNow();
+	time_dt = Math.max(newtime - LAST_TIME, 0);
+	LAST_TIME = newtime;
+
+	UI_STATE.tick();
+
+	requestAnimationFrame(tick);
+}
+
+tick();
+
+</script></body></html>
